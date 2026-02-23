@@ -1,0 +1,35 @@
+services:
+  # ── Backend: Node.js API with age calculation & file generation ──
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agediff-backend
+    restart: unless-stopped
+    environment:
+      - PORT=4000
+      - OUTPUT_DIR=/app/output
+      - NODE_ENV=production
+    volumes:
+      - ./output:/app/output
+    networks:
+      - app-network
+    # Not exposed externally – Nginx proxies to it
+
+  # ── Frontend: Nginx serving static files + reverse proxy ──
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: agediff-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

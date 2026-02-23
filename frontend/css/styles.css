@@ -1,0 +1,565 @@
+/* ==========================================================================
+   AgeDiff – Styles
+   Modern dark-themed birthday calculator UI
+   ========================================================================== */
+
+/* ---------- Reset & base ---------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --clr-bg: #0b0d17;
+    --clr-bg-gradient: linear-gradient(160deg, #0b0d17 0%, #1a1035 50%, #0b0d17 100%);
+    --clr-surface: rgba(25, 28, 50, 0.8);
+    --clr-surface-solid: #191c32;
+    --clr-surface-hover: #222545;
+    --clr-border: rgba(255, 255, 255, 0.08);
+    --clr-text: #e8eaf6;
+    --clr-text-muted: #8890a4;
+    --clr-accent: #7c5cff;
+    --clr-accent-hover: #9b7fff;
+    --clr-teal: #00d4aa;
+    --clr-pink: #ff6eb4;
+    --clr-gold: #ffd93d;
+    --clr-danger: #ff5252;
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --shadow-glow: 0 0 60px rgba(124, 92, 255, 0.12);
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --transition: 0.3s ease;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--clr-bg);
+    background-image: var(--clr-bg-gradient);
+    background-attachment: fixed;
+    color: var(--clr-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--clr-accent);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--clr-accent-hover);
+}
+
+/* ---------- Header ---------- */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11, 13, 23, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--clr-border);
+}
+
+.header__inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.35rem;
+    color: var(--clr-text);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.header__logo:hover {
+    color: var(--clr-accent);
+}
+
+.header__logo-icon {
+    font-size: 1.6rem;
+}
+
+/* ---------- Main ---------- */
+.main {
+    flex: 1;
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* ---------- Hero / Input section ---------- */
+.input-section {
+    text-align: center;
+    padding: 5rem 0 3rem;
+    transition: all 0.5s ease;
+}
+
+.input-section.collapsed {
+    padding: 1rem 0 1.5rem;
+}
+
+.input-section.collapsed .hero-title,
+.input-section.collapsed .hero-subtitle {
+    display: none;
+}
+
+.hero-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--clr-accent), var(--clr-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+}
+
+.hero-title em {
+    font-style: italic;
+}
+
+.hero-subtitle {
+    color: var(--clr-text-muted);
+    font-size: 1.15rem;
+    margin-bottom: 2.5rem;
+}
+
+.birthday-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.date-input {
+    background: var(--clr-surface-solid);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    color: var(--clr-text);
+    font-family: var(--font);
+    font-size: 1rem;
+    padding: 0.8rem 1.25rem;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    min-width: 210px;
+    color-scheme: dark;
+}
+
+.date-input:focus {
+    border-color: var(--clr-accent);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.2);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.8rem 1.75rem;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn--primary {
+    background: linear-gradient(135deg, var(--clr-accent), #6040d4);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(124, 92, 255, 0.3);
+}
+
+.btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(124, 92, 255, 0.45);
+}
+
+.btn--primary:active {
+    transform: translateY(0);
+}
+
+.btn--ghost {
+    background: var(--clr-surface);
+    color: var(--clr-text-muted);
+    border: 1px solid var(--clr-border);
+}
+
+.btn--ghost:hover {
+    color: var(--clr-text);
+    border-color: var(--clr-accent);
+    background: var(--clr-surface-hover);
+}
+
+/* ---------- Congratulations ---------- */
+.congrats-section {
+    animation: fadeIn 0.6s ease;
+}
+
+.congrats-card {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg, rgba(255, 110, 180, 0.12), rgba(124, 92, 255, 0.12));
+    border: 1px solid rgba(255, 110, 180, 0.25);
+    border-radius: var(--radius-lg);
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.congrats-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 110, 180, 0.06) 0%, transparent 70%);
+    animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(5%, 5%);
+    }
+}
+
+.congrats-card__stars {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.congrats-card__title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--clr-pink), var(--clr-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+}
+
+.congrats-card__message {
+    color: var(--clr-text-muted);
+    font-size: 1.1rem;
+    position: relative;
+}
+
+/* ---------- Result cards ---------- */
+.result-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.4s ease;
+}
+
+.result-card__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.result-card__icon {
+    font-size: 1.5rem;
+}
+
+/* ---------- Tabs ---------- */
+.result-card__tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--clr-border);
+    padding-bottom: 0.75rem;
+}
+
+.tab {
+    font-family: var(--font);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--clr-text-muted);
+    background: none;
+    border: none;
+    padding: 0.5rem 1.15rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.tab:hover {
+    color: var(--clr-text);
+}
+
+.tab.active {
+    color: var(--clr-accent);
+    background: rgba(124, 92, 255, 0.1);
+}
+
+.result-card__content {
+    display: none;
+}
+
+.result-card__content.active {
+    display: block;
+    animation: fadeIn 0.25s ease;
+}
+
+/* ---------- Unit grid (component breakdown) ---------- */
+.unit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 1rem;
+}
+
+.unit-box {
+    text-align: center;
+    padding: 1.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.unit-box:hover {
+    border-color: var(--clr-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(124, 92, 255, 0.15);
+}
+
+.unit-box__value {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--clr-accent), var(--clr-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.unit-box__label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--clr-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ---------- Totals list ---------- */
+.totals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.25rem;
+    background: rgba(255, 255, 255, 0.025);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--clr-accent);
+    transition: background var(--transition);
+}
+
+.totals-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.totals-row__label {
+    font-size: 0.92rem;
+    color: var(--clr-text-muted);
+    font-weight: 500;
+}
+
+.totals-row__value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--clr-teal);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ---------- Confetti ---------- */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(105vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ---------- Error toast ---------- */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--clr-danger);
+    color: #fff;
+    padding: 0.8rem 1.75rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 20px rgba(255, 82, 82, 0.35);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--clr-text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--clr-border);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .unit-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .unit-box {
+        padding: 1rem 0.5rem;
+    }
+
+    .unit-box__value {
+        font-size: 1.5rem;
+    }
+
+    .result-card {
+        padding: 1.25rem;
+    }
+
+    .main {
+        padding: 1.25rem 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .unit-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .birthday-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-input {
+        min-width: unset;
+    }
+}

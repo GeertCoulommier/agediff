@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgeDiff – Birthday Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<body>
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="header__inner">
+            <a href="/" class="header__logo">
+                <span class="header__logo-icon">🎂</span>
+                <span class="header__logo-text">Age<strong>Diff</strong></span>
+            </a>
+            <button id="resetBtn" class="btn btn--ghost" hidden>New Calculation</button>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main">
+        <!-- Landing / Input -->
+        <section id="inputSection" class="section input-section">
+            <h1 class="hero-title">How old are you, <em>really</em>?</h1>
+            <p class="hero-subtitle">Enter your birthday and see your age broken down to the second.</p>
+            <form id="birthdayForm" class="birthday-form">
+                <input type="date" id="birthdayInput" class="date-input" required />
+                <button type="submit" class="btn btn--primary">Calculate</button>
+            </form>
+        </section>
+
+        <!-- Congratulations Banner (shown on birthday) -->
+        <section id="congratsSection" class="section congrats-section" hidden>
+            <div class="congrats-card">
+                <div class="congrats-card__stars">&#10024; &#10024; &#10024;</div>
+                <h2 class="congrats-card__title">Happy Birthday!</h2>
+                <p id="congratsMessage" class="congrats-card__message"></p>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section id="resultsSection" class="section" hidden>
+            <!-- Time Since Birth -->
+            <div class="result-card" id="sinceCard">
+                <h2 class="result-card__title"><span class="result-card__icon">&#9201;</span> Time Since Birth</h2>
+                <div class="result-card__tabs">
+                    <button class="tab active" data-target="sinceComponents">Components</button>
+                    <button class="tab" data-target="sinceTotals">Totals</button>
+                </div>
+                <div id="sinceComponents" class="result-card__content active"></div>
+                <div id="sinceTotals" class="result-card__content"></div>
+            </div>
+
+            <!-- Time Until Next Birthday -->
+            <div class="result-card" id="nextBirthdayCard">
+                <h2 class="result-card__title"><span class="result-card__icon">&#127874;</span> Until Next Birthday</h2>
+                <div class="result-card__tabs">
+                    <button class="tab active" data-target="nextComponents">Components</button>
+                    <button class="tab" data-target="nextTotals">Totals</button>
+                </div>
+                <div id="nextComponents" class="result-card__content active"></div>
+                <div id="nextTotals" class="result-card__content"></div>
+            </div>
+        </section>
+
+        <!-- Error toast -->
+        <div id="errorToast" class="toast" hidden></div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>AgeDiff &middot; Docker Build Demo</p>
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+
+</html>
