@@ -56,7 +56,55 @@ countdown to your next birthday, with a special celebration on the day itself.
 
 ---
 
+## 📖 How to Use This Guide
+
+**This README provides educational guidance without showing full commands.** Your task is to research and construct the actual Docker commands based on the descriptions provided. All complete command examples are available in [README_FULL.md](README_FULL.md) if you need to verify your work or get unstuck.
+
+This approach encourages hands-on learning and helps you understand what each Docker command does, rather than just copying and pasting.
+
+---
+
 ## Getting the Repository
+
+### Using Git (recommended)
+
+If you have Git installed:
+
+```bash
+git clone https://github.com/GeertCoulommier/agediff.git
+cd agediff
+```
+
+### Using Windows Package Manager (winget) + ZIP Download
+
+On Windows, you can use winget to install `curl` and `unzip`, then download the repository as a ZIP file:
+
+1. **Install curl and unzip** (if not already installed):
+   ```bash
+   winget install -q curl
+   winget install -q GnuWin32.UnZip
+   ```
+
+2. **Download the repository as a ZIP file**:
+   ```bash
+   curl -L https://github.com/GeertCoulommier/agediff/archive/refs/heads/main.zip -o agediff.zip
+   ```
+
+3. **Extract the ZIP file**:
+   ```bash
+   unzip -q agediff.zip
+   cd agediff-main
+   ```
+
+### On macOS or Linux without Git
+
+You can use `curl` and `unzip` (usually pre-installed):
+
+```bash
+curl -L https://github.com/GeertCoulommier/agediff/archive/refs/heads/main.zip -o agediff.zip
+unzip -q agediff.zip
+cd agediff-main
+```
 
 ### Option 1 – Git Clone (recommended)
 
@@ -102,14 +150,26 @@ The static files and Nginx configuration should be baked into the image at build
 
 ### Step 5 – Start the backend container
 
-Run the backend container with:
-- Detached mode (background)
-- A container name
-- Network attachment with an alias (so Nginx can resolve it by name)
-- Restart policy (auto-restart after crash)
-- Environment variables for port and Node.js mode
-- A bind mount that connects the `output/` directory on your host to `/app/output/` in the container
-- The backend should NOT expose a port to the host (only Nginx should)
+Run the backend container. For reference, use the suggested container name `agediff-backend` and the image you built in Step 3. The following is already configured and provided — you only need to add the container name, the volume mount, and the image:
+
+Pre-configured network and environment settings:
+```
+--network agediff-net \
+--network-alias backend \
+--restart unless-stopped \
+-e PORT=4000 \
+-e OUTPUT_DIR=/app/output \
+-e NODE_ENV=production \
+```
+
+**Your task:** Construct a `docker run` command that combines:
+- Detached mode (`-d` flag)
+- The container name: `agediff-backend`
+- The pre-configured settings above
+- A volume mount (bind mount) connecting the host's `./output` directory to the container's `/app/output` directory
+- The image name from Step 3
+
+Consult [README_FULL.md](README_FULL.md) for a complete example if needed.
 
 ### Step 6 – Start the frontend container
 
