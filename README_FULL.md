@@ -60,65 +60,131 @@ countdown to your next birthday, with a special celebration on the day itself.
 
 ### Option 1 – Git Clone (recommended)
 
-If you have Git installed, clone the repository from GitHub to your local machine.
+If you have Git installed:
+
+```bash
+git clone https://github.com/GeertCoulommier/agediff.git
+cd agediff
+```
+
+This clones the entire repository with full version history.
 
 ### Option 2 – Download as ZIP (Windows/macOS without Git)
 
-If you don't have Git installed:
+If you don't have Git installed, you can download and extract the repository:
 
-1. **On Windows with winget:** Install the unzip tool using your package manager if needed
-2. **Download the repository:** Visit the GitHub repository and download it as a ZIP file, or use a
-   command-line tool to download the ZIP from the repository's archive URL
-3. **Extract the ZIP:** Use your unzip tool to extract the downloaded file
-4. **Navigate:** Change into the extracted directory
+#### On Windows with winget:
+
+```bash
+# Install unzip (if not already installed)
+winget install -q GnuWin32.UnZip
+
+# Download the repository as ZIP
+# Visit https://github.com/GeertCoulommier/agediff/archive/refs/heads/main.zip
+# and extract it manually, or use:
+curl -L https://github.com/GeertCoulommier/agediff/archive/refs/heads/main.zip -o agediff.zip
+unzip -q agediff.zip
+cd agediff-main
+```
+
+#### On macOS/Linux without Git:
+
+```bash
+curl -L https://github.com/GeertCoulommier/agediff/archive/refs/heads/main.zip -o agediff.zip
+unzip -q agediff.zip
+cd agediff-main
+```
 
 ---
 
 ## Option A – Docker CLI (no Compose)
 
-This workflow uses raw `docker` commands. For detailed command examples, see [README_FULL.md](README_FULL.md).
-
-This workflow teaches you how Docker works by running commands individually, so you can see exactly what each step does.
+This workflow uses raw `docker` commands so you can see exactly what each step does.
 
 ### Step 1 – Create the output directory
 
-Create a directory that will receive the summary text file from the backend container via a bind mount.
+```bash
+mkdir -p output
+```
+
+This directory will receive the summary text file from the backend container via a bind mount.
 
 ### Step 2 – Create a shared Docker network
 
-Create a network that allows your containers to communicate with each other by name. This isolates
-them from other containers and the host system.
+```bash
+docker network create agediff-net
+```
+
+Containers cannot talk to each other by name unless they share the same network. This creates an
+isolated bridge network. Services on it can reach each other using their container name or alias as
+a hostname. Nothing outside this network can initiate connections to them.
 
 ### Step 3 – Build the backend image
 
-Build the Docker image for the Node.js backend. Use the `Dockerfile` in the `backend/` directory.
-The Docker layer cache should skip the `npm ci` step on subsequent builds if only your application
-code changes (not `package.json`).
+```bash
+docker build -t agediff-backend ./backend
+```
+
+Docker reads `backend/Dockerfile`, executes each `RUN`/`COPY` instruction as a cacheable layer, and
+tags the result `agediff-backend:latest`. Because `package.json` is copied before the application
+source, the expensive `npm ci` step is skipped on subsequent builds whenever only app code changes.
 
 ### Step 4 – Build the frontend image
 
-Build the Docker image for the Nginx frontend. Use the `Dockerfile` in the `frontend/` directory.
-The static files and Nginx configuration should be baked into the image at build time.
+```bash
+docker build -t agediff-frontend ./frontend
+```
+
+Same process for the Nginx image. The static files (HTML/CSS/JS) and the custom `nginx.conf`
+(which includes the `/api/` reverse-proxy rule and rate-limiting zone) are baked into the image at
+build time.
 
 ### Step 5 – Start the backend container
 
-Run the backend container with:
-- Detached mode (background)
-- A container name
-- Network attachment with an alias (so Nginx can resolve it by name)
-- Restart policy (auto-restart after crash)
-- Environment variables for port and Node.js mode
-- A bind mount that connects the `output/` directory on your host to `/app/output/` in the container
-- The backend should NOT expose a port to the host (only Nginx should)
+```bash
+docker run -d \
+  --name agediff-backend \
+  --network agediff-net \
+  --network-alias backend \
+  --restart unless-stopped \
+  -e PORT=4000 \
+  -e OUTPUT_DIR=/app/output \
+  -e NODE_ENV=production \
+  -v "$(pwd)/output:/app/output" \
+  agediff-backend
+```
+
+What each flag does:
+
+| Flag | Purpose |
+|------|---------|
+| `-d` | Run in the background (detached mode) |
+| `--name agediff-backend` | Give the container a human-readable name for subsequent commands |
+| `--network agediff-net` | Attach it to the shared bridge network |
+| `--network-alias backend` | Register the DNS name `backend` inside the network — Nginx resolves this hostname to forward API requests |
+| `--restart unless-stopped` | Automatically restart after a crash or a Docker daemon restart |
+| `-e PORT=4000` | Tell Node.js which port to listen on inside the container |
+| `-e OUTPUT_DIR=/app/output` | Directory where the summary text file is written |
+| `-v "$(pwd)/output:/app/output"` | Bind-mount the host `output/` directory into the container |
+
+No port is published to the host (`-p` is absent). The backend is intentionally reachable only
+through the internal network — all external traffic must go through Nginx.
 
 ### Step 6 – Start the frontend container
 
-Run the frontend container with:
-- Detached mode
-- A container name
-- Network attachment (same network as the backend)
-- Port mapping (80 on host → 80 in container)
-- Restart policy
+```bash
+docker run -d \
+  --name agediff-frontend \
+  --network agediff-net \
+  --restart unless-stopped \
+  -p 80:80 \
+  agediff-frontend
+```
+
+| Flag | Purpose |
+|------|---------|
+| `-p 80:80` | Map host port 80 → container port 80, making Nginx reachable from the browser |
+| `--network agediff-net` | Same shared network, so Nginx can DNS-resolve the `backend` alias |
 
 Open **http://localhost** in your browser.
 
@@ -248,36 +314,58 @@ The `-d` flag (detached) returns control to your terminal. Without it Compose st
 stdout and blocks until you press Ctrl-C.
 
 Open **http://localhost** in your browser.
-For detailed command examples, see [README_FULL.md](README_FULL.md).
-
-Compose manages the entire multi-container application from a single `docker-compose.yml` file.
-Instead of running individual `docker` commands, Compose handles network creation, dependency ordering,
-volume mounts, and full lifecycle control with simple commands.
-
-### Step 1 – Create the output directory
-
-Create the output directory that Compose will bind-mount into the backend container. The summary
-text file will appear here after your first calculation.
-
-### Step 2 – Build all images
-
-Use the Docker Compose build command to read the build context and Dockerfile for each service
-defined in `docker-compose.yml` and build them. Docker's layer cache applies here too, so repeated
-builds are fast. You can also build individual services if needed.
-
-### Step 3 – Start all services
-
-Use the Docker Compose up command with the detached flag. Compose will automatically:
-
-1. Create the bridge network declared in the Compose file
-2. Start the backend first (because the frontend declares a dependency on it)
-3. Start the frontend, publishing the host port
-4. Set up volume mounts (output directory)
 
 ### Combined build + start
 
-You can also combine build and start into a single command using the build flag with the up command.
-Use this whenever you change application cat output/age_summary.txt
+```bash
+docker compose up --build -d
+```
+
+Equivalent to running `build` then `up -d` in one step. Use this whenever you change application
+code and want to rebuild and restart without separate commands.
+
+---
+
+### Useful Commands (Docker Compose)
+
+#### View logs
+
+```bash
+# Follow all services at once (colour-coded by service name)
+docker compose logs -f
+
+# Follow a single service
+docker compose logs -f backend
+
+# Show the last 100 lines from all services
+docker compose logs --tail 100
+```
+
+Interleaved, colour-coded output makes it easy to trace a request as it flows from Nginx → Node.js
+and back.
+
+#### Check container status and health
+
+```bash
+# Show all service containers, their status, and exposed ports
+docker compose ps
+
+# Detailed health-check state
+docker inspect --format '{{.State.Health.Status}}' agediff-backend
+docker inspect --format '{{.State.Health.Status}}' agediff-frontend
+```
+
+#### Open a shell inside a service container
+
+```bash
+docker compose exec backend sh
+docker compose exec frontend sh
+```
+
+#### Check the generated summary file
+
+```bash
+cat output/age_summary.txt
 ```
 
 #### Stop containers (keep images and volumes)
@@ -321,7 +409,8 @@ affected containers in-place. Services with unchanged images are left running.
 agediff/
 ├── docker-compose.yml        # Orchestrates both services + volume mount
 ├── .gitignore
-├── README.md
+├── README.md                 # Quick-start guide (simplified instructions)
+├── README_FULL.md            # Complete guide with full command examples
 ├── output/                   # Bind-mounted volume (git-ignored)
 │   └── age_summary.txt      # Generated summary with ASCII bar chart
 ├── backend/
@@ -343,8 +432,7 @@ agediff/
 ---
 
 ## Key Docker Concepts Demonstrated
-                 # Quick-start guide (simplified instructions)
-├── README_FULL.md            # Complete guide with full command examples
+
 | Concept | Where |
 |---------|-------|
 | Multi-service orchestration | `docker-compose.yml` |
