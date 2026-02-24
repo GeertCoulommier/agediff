@@ -43,7 +43,10 @@ const rateLimiter = rateLimit({
     },
 });
 
-app.use("/api/", rateLimiter);
+// Skip rate limiting in test environment so tests aren't throttled
+if (process.env.NODE_ENV !== "test") {
+    app.use("/api/", rateLimiter);
+}
 
 // ---------------------------------------------------------------------------
 // Routes
@@ -373,8 +376,19 @@ function getBirthdayAsciiArt() {
 }
 
 // ---------------------------------------------------------------------------
-// Start server
+// Unknown-route handler (must come after all routes)
 // ---------------------------------------------------------------------------
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`AgeDiff backend listening on http://0.0.0.0:${PORT}`);
+app.use((_req, res) => {
+    res.status(404).json({ error: "Not found." });
 });
+
+// ---------------------------------------------------------------------------
+// Start server (only when run directly; not when required by tests)
+// ---------------------------------------------------------------------------
+if (require.main === module) {
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`AgeDiff backend listening on http://0.0.0.0:${PORT}`);
+    });
+}
+
+module.exports = { app, calculateAll, fmtDate };

@@ -1,5 +1,19 @@
+# Dependencies
 node_modules/
+
+# Generated output
 output/
-*.log
+
+# Test coverage
+coverage/
+
+# Environment
 .env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS artefacts
 .DS_Store
+Thumbs.db
