@@ -66,46 +66,6 @@ This approach encourages hands-on learning and helps you understand what each Do
 
 ## Getting the Repository
 
-### Using Git (recommended)
-
-If you have Git installed:
-
-```bash
-git clone https://github.com/GeertCoulommier/agediff.git
-cd agediff
-```
-
-### Using Windows Package Manager (winget) + ZIP Download
-
-On Windows, you can use winget to install `curl` and `unzip`, then download the repository as a ZIP file:
-
-1. **Install curl and unzip** (if not already installed):
-   ```bash
-   winget install -q curl
-   winget install -q GnuWin32.UnZip
-   ```
-
-2. **Download the repository as a ZIP file**:
-   ```bash
-   curl -L https://github.com/GeertCoulommier/agediff/archive/refs/heads/main.zip -o agediff.zip
-   ```
-
-3. **Extract the ZIP file**:
-   ```bash
-   unzip -q agediff.zip
-   cd agediff-main
-   ```
-
-### On macOS or Linux without Git
-
-You can use `curl` and `unzip` (usually pre-installed):
-
-```bash
-curl -L https://github.com/GeertCoulommier/agediff/archive/refs/heads/main.zip -o agediff.zip
-unzip -q agediff.zip
-cd agediff-main
-```
-
 ### Option 1 – Git Clone (recommended)
 
 If you have Git installed, clone the repository from GitHub to your local machine.
@@ -337,8 +297,7 @@ Use the Docker Compose up command with the detached flag. Compose will automatic
 ### Combined build + start
 
 You can also combine build and start into a single command using the build flag with the up command.
-Use this whenever you change application cat output/age_summary.txt
-```
+Use this whenever you change application code and want to rebuild and restart without separate commands.
 
 #### Stop containers (keep images and volumes)
 
@@ -381,7 +340,8 @@ affected containers in-place. Services with unchanged images are left running.
 agediff/
 ├── docker-compose.yml        # Orchestrates both services + volume mount
 ├── .gitignore
-├── README.md
+├── README.md                 # Quick-start guide (simplified instructions)
+├── README_FULL.md            # Complete guide with full command examples
 ├── output/                   # Bind-mounted volume (git-ignored)
 │   └── age_summary.txt      # Generated summary with ASCII bar chart
 ├── backend/
@@ -403,8 +363,7 @@ agediff/
 ---
 
 ## Key Docker Concepts Demonstrated
-                 # Quick-start guide (simplified instructions)
-├── README_FULL.md            # Complete guide with full command examples
+
 | Concept | Where |
 |---------|-------|
 | Multi-service orchestration | `docker-compose.yml` |
